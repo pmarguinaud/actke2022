@@ -77,50 +77,9 @@ def evaluateCondition(my_condition, true_symbols, false_symbols):
     return[False, False]
 
 
-# test_config = {
-#     'default': {
-#         'mode': 'idem',
-#         'role': 'kernel',
-#         'expand': True,
-#         'strict': True,
-#         # # Ensure that we are never adding these to the tree, and thus
-#         # # do not attempt to look up the source files for these.
-#         # # TODO: Add type-bound procedure support and adjust scheduler to it
-#         'disable' :  ['abort', 'load', 'getoption', 'getdata', 'initoptions', 'checkoptions', 'dr_hook']
-#         # 'disable': ['timer%start', 'timer%end', 'timer%thread_start', 'timer%thread_end',
-#         #             'timer%thread_log', 'timer%thread_log', 'timer%print_performance']
-#     },
-#      'routine': [
-#          # {
-#     #         'name': 'cloudsc_driver',
-#     #         'role': 'driver',
-#     #         'expand': True,
-#          # }
-#      ],
-#      'dimension': [
-#          # {
-#     #         'name': 'horizontal',
-#     #         'size': 'KLON',
-#     #         'index': 'JL',
-#     #         'bounds': ('KIDIA', 'KFDIA'),
-#     #         'aliases': ['NPROMA', 'KDIM%KLON'],
-#     #     },
-#     #     {
-#     #         'name': 'vertical',
-#     #         'size': 'KLEV',
-#     #         'index': 'JK',
-#     #     },
-#     #     {
-#     #         'name': 'block_dim',
-#     #         'size': 'NGPBLKS',
-#     #         'index': 'IBL',
-#          # }
-#      ]
-# }
 
 
 files = ["../src/actke.F90", "../src/acturb.F90"]
-
 
 output_suffix = ".preproc"
 
@@ -137,7 +96,6 @@ for file in files:
     for cond in FindNodes(Conditional).visit(routine.body):
 
       # If at least one of the forced-value symbols is present in the condition, we can try to evaluate it
-
       evaluable = False
       for symbol in FindTypedSymbols().visit(cond.condition) :
         if (symbol in true_symbols or symbol in false_symbols):
@@ -149,11 +107,8 @@ for file in files:
         print("evaluated : ", evaluable, "  ---  value : ", evaluation)
         if evaluable :
           if evaluation :
-            # print (cond.body)
-            # print (cond.body.__class__)
             callmap[cond] = cond.body
           else:
-            # print (cond.else_body)
             callmap[cond] = cond.else_body
     routine.body=Transformer(callmap).visit(routine.body)
 
