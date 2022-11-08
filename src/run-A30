@@ -1,0 +1,36 @@
+#!/bin/bash
+##SBATCH --partition biggpu
+#SBATCH --partition gpua30
+#SBATCH --gres=gpu:a30:1
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --job-name ACDRME_GPU
+#SBATCH -o A30.out
+#SBATCH -e A30.err
+##SBATCH --time=6:00:0
+#SBATCH --no-requeue
+
+module load avbp/7.X_nvhpc-21.9-gpu
+
+cd $SLURM_SUBMIT_DIR
+echo $SLURM_SUBMIT_DIR
+export CUDA_VSIBLE_DEVICES=0
+#export PGI_ACC_CUDA_HEAPSIZE=67108864
+#export PGI_ACC_NOTIFY=1
+
+
+export NSYS_EXE=/softs/nvidia/hpc_sdk/Linux_x86_64/20.9/compilers/bin/nsys
+
+#mpirun -np 1 time ./wrap_acdrme.x --case ../data_128 --blocks 1050 --nproma 32 --check
+#exit
+#mpirun -np 1 time ./wrap_acdrag.cpu_reference --case ../single --blocks 1050 --nproma 32 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 1050 --nproma 32 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 525 --nproma 64 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 263 --nproma 128 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 132 --nproma 256 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 66 --nproma 512 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 33 --nproma 1024 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 17 --nproma 2048 --check
+#mpirun -np 1 time ./wrap_acdrag.x --case ../single --blocks 9 --nproma 4096 --check
+#mpirun -np 1 ./run.sh
+./run.sh
