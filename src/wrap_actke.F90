@@ -144,6 +144,9 @@ USE UTIL_MODEL_PHYSICS_MF_TYPE_MOD
 USE GETDATA_MOD
 USE CHECK_UTILS_MOD
 USE XRD_GETOPTIONS
+#ifdef _MPI
+  USE MPI
+#endif
 
 !-----------------------------------------------------------------------
 
@@ -239,6 +242,7 @@ INTEGER :: CLCASE_NUM, CLCASE_MIN, CLCASE_MAX
 INTEGER(KIND=JPIM)    :: NPROMA, NGPBLKS, NGPTOT, KLONTOT
 LOGICAL :: LLCHECK
 INTEGER :: I, J, IBL
+REAL(8) :: start_time, end_time
 
 NPROMA = 0
 NGPBLKS = 0
@@ -329,6 +333,9 @@ write(*,*) "call ACTKE   blocks : ", NGPBLKS
 
 KIDIA = 1
 KFDIA = NPROMA
+#ifdef _MPI
+start_time = MPI_WTime()
+#endif
 
 DO IBL = 1, NGPBLKS
 CALL ACTKE ( YDCST, YDLDDH,YDMDDH,YDML_PHY_MF,KIDIA, KFDIA, NPROMA, KTDIAT, KTDIAN, KLEV,&
@@ -340,6 +347,12 @@ CALL ACTKE ( YDCST, YDLDDH,YDMDDH,YDML_PHY_MF,KIDIA, KFDIA, NPROMA, KTDIAT, KTDI
             & PNEBS(:,:,IBL), PQCS(:,:,IBL), PNEBS0(:,:,IBL), PQCS0(:,:,IBL), PCOEFN(:,:,IBL) , &
             & PFECT(:,:,IBL) , PFECTI(:,:,IBL), PECT1(:,:,IBL) , PTPRDY(:,:,IBL), PEDR(:,:,IBL))
 END DO
+#ifdef _MPI
+end_time = MPI_WTime()
+write(*,*) "Time in main loop = ", end_time - start_time
+#endif
+
+
 
 ! PQICE_REF, PQLI_REF, PECT_REF, PPRODTH_REF, PNLAB_REF, PNLABCVP_REF, &
 WRITE(*,*) "check diff on PQICE"
